@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>习惯小达人 · 好习惯坏习惯闯关记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF7EE;
+    --coral:#FF6F5E;
+    --coral-dark:#E04E3E;
+    --mint:#2FC9B0;
+    --mint-dark:#1E9C88;
+    --sun:#FFC24B;
+    --sun-dark:#E8A11F;
+    --storm:#8E8CC7;
+    --storm-dark:#6E6BA8;
+    --ink:#3A2E2A;
+    --paper:#FFFFFF;
+    --muted:#8A7D74;
+    --radius:24px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;font-family:'Nunito',sans-serif;color:var(--ink);
+    background:var(--cream);overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:'Fredoka',sans-serif;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,247,238,0.9);backdrop-filter:blur(6px);
+    border-bottom:2px solid rgba(58,46,42,0.06);
+  }
+  .header-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 24px;max-width:1040px;margin:0 auto;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.2rem;color:var(--coral-dark);}
+  .logo-badge{
+    width:38px;height:38px;border-radius:14px;
+    background:linear-gradient(135deg,var(--sun),var(--coral));
+    display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+    box-shadow:0 3px 0 rgba(0,0,0,0.08);
+  }
+  .energy-meter{display:flex;align-items:center;gap:8px;}
+  .energy-label{font-size:0.8rem;font-weight:700;color:var(--coral-dark);white-space:nowrap;}
+  .stars-row{display:flex;gap:3px;font-size:1rem;}
+  .stars-row span{filter:grayscale(1);opacity:.35;transition:all .4s ease;}
+  .stars-row span.lit{filter:none;opacity:1;}
+  @media (max-width:560px){.energy-label{display:none;}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;padding:56px 24px 30px;text-align:center;
+    background:radial-gradient(ellipse at 50% 0%, #FFEFDD 0%, var(--cream) 60%);
+    overflow:hidden;
+  }
+  .hero-tag{
+    display:inline-block;font-weight:700;color:var(--mint-dark);background:#E2F8F4;
+    padding:6px 16px;border-radius:20px;font-size:0.85rem;margin-bottom:16px;
+  }
+  .hero h1{font-size:clamp(2rem,6vw,3.2rem);margin:0 0 10px;color:var(--coral-dark);}
+  .hero p{color:#6b5a52;font-weight:600;max-width:480px;margin:0 auto 30px;font-size:1.02rem;}
+
+  /* character + orbit */
+  .stage-char{position:relative;width:220px;height:220px;margin:0 auto 26px;}
+  .orbit{
+    position:absolute;inset:0;animation:spin 14s linear infinite;
+  }
+  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+  .orbit .star{
+    position:absolute;font-size:1.4rem;filter:grayscale(.7);opacity:.4;
+    transition:opacity .5s ease, filter .5s ease;
+  }
+  .orbit .star.lit{filter:none;opacity:1;}
+  .s1{top:0;left:50%;transform:translateX(-50%) rotate(0deg);}
+  .s2{top:50%;right:-6px;transform:translateY(-50%) rotate(0deg);}
+  .s3{bottom:0;left:50%;transform:translateX(-50%) rotate(0deg);}
+  .s4{top:50%;left:-6px;transform:translateY(-50%) rotate(0deg);}
+  .orbit .star span{display:inline-block;animation:counterspin 14s linear infinite;}
+  @keyframes counterspin{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
+
+  .char-face{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:130px;height:130px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #FFD8A8, var(--sun));
+    display:flex;align-items:center;justify-content:center;font-size:3.6rem;
+    box-shadow:0 10px 0 rgba(232,161,31,0.35);
+    transition:background .6s ease, box-shadow .6s ease;
+  }
+  .char-face.low{background:radial-gradient(circle at 35% 30%, #C9C3E0, var(--storm));box-shadow:0 10px 0 rgba(110,107,168,0.35);}
+  .char-face.mid{background:radial-gradient(circle at 35% 30%, #FFE2B0, var(--sun));}
+  .char-face.high{background:radial-gradient(circle at 35% 30%, #FFD9CF, var(--coral));box-shadow:0 10px 0 rgba(224,78,62,0.35);}
+
+  .btn{
+    font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.05rem;
+    border:none;cursor:pointer;border-radius:100px;padding:14px 30px;
+    background:var(--coral);color:#fff;box-shadow:0 6px 0 var(--coral-dark);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--coral-dark);}
+  .btn.secondary{background:var(--mint);box-shadow:0 6px 0 var(--mint-dark);}
+  .btn.secondary:active{box-shadow:0 2px 0 var(--mint-dark);}
+
+  /* ---------- SECTIONS ---------- */
+  section.stage{padding:60px 0 30px;}
+  .stage-head{text-align:center;max-width:600px;margin:0 auto 32px;}
+  .stage-num{
+    display:inline-block;font-family:'Fredoka',sans-serif;font-weight:600;color:#fff;
+    background:var(--mint-dark);border-radius:50%;width:34px;height:34px;line-height:34px;
+    margin-bottom:10px;font-size:1rem;
+  }
+  .stage-head h2{font-size:clamp(1.5rem,3.6vw,2rem);color:var(--coral-dark);margin:6px 0 8px;}
+  .stage-head p{color:var(--muted);margin:0;font-weight:600;}
+
+  .panel{
+    background:var(--paper);border-radius:var(--radius);
+    box-shadow:0 10px 0 rgba(58,46,42,0.05), 0 2px 24px rgba(58,46,42,0.07);
+    padding:28px;border:2px solid rgba(58,46,42,0.05);
+  }
+
+  /* sorting game */
+  .sort-hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+  .hud-chip{
+    background:#FFF1E4;border-radius:14px;padding:8px 16px;font-weight:700;color:var(--coral-dark);
+    font-family:'Fredoka',sans-serif;font-size:0.92rem;
+  }
+  .card-stage{display:flex;justify-content:center;margin-bottom:28px;}
+  .habit-card{
+    background:#FFFDF9;border:3px solid #FFE1BE;border-radius:20px;
+    padding:26px 30px;text-align:center;min-width:220px;
+    animation:pop .35s ease;
+  }
+  @keyframes pop{from{transform:scale(.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .habit-card .icon{font-size:2.6rem;display:block;margin-bottom:8px;}
+  .habit-card .txt{font-weight:800;font-size:1.05rem;color:var(--ink);}
+
+  .choice-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .choice-btn{
+    flex:1;min-width:160px;max-width:260px;border:none;border-radius:18px;padding:20px 12px;
+    cursor:pointer;color:#fff;font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.02rem;
+    display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .12s ease;
+  }
+  .choice-btn:hover{transform:translateY(-3px);}
+  .choice-btn:active{transform:translateY(1px);}
+  .choice-btn.good{background:var(--sun);color:#5b3a00;box-shadow:0 6px 0 var(--sun-dark);}
+  .choice-btn.bad{background:var(--storm);box-shadow:0 6px 0 var(--storm-dark);}
+  .choice-btn .icon{font-size:2rem;}
+
+  .feedback-flash{
+    text-align:center;font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.05rem;
+    min-height:28px;margin-top:18px;
+  }
+  .feedback-flash.good{color:var(--mint-dark);}
+  .feedback-flash.bad{color:var(--coral-dark);}
+
+  /* quiz */
+  .quiz-progress{display:flex;gap:6px;margin-bottom:22px;}
+  .quiz-dot{flex:1;height:8px;border-radius:8px;background:#F2E7DA;}
+  .quiz-dot.done{background:var(--mint-dark);}
+  .quiz-q{font-size:1.12rem;font-weight:700;color:var(--coral-dark);margin-bottom:18px;}
+  .quiz-opts{display:grid;gap:12px;}
+  .opt{
+    text-align:left;padding:14px 18px;border-radius:14px;border:2px solid #F2E7DA;
+    background:#FFFDF9;cursor:pointer;font-weight:700;font-size:0.98rem;color:#4a3d36;
+    transition:all .15s ease;
+  }
+  .opt:hover{border-color:var(--mint);}
+  .opt.correct{background:#E1F7F1;border-color:var(--mint-dark);color:#1c4d43;}
+  .opt.wrong{background:#EFEDF9;border-color:var(--storm-dark);color:#463f6e;}
+  .opt.disabled{pointer-events:none;}
+  .explain{
+    margin-top:16px;background:#FFF3DC;border-left:5px solid var(--sun);border-radius:10px;
+    padding:12px 16px;font-size:0.92rem;color:#6b4f1f;display:none;font-weight:600;
+  }
+
+  /* result */
+  .badge-card{text-align:center;}
+  .badge-emoji{font-size:4.4rem;margin-bottom:8px;display:block;}
+  .badge-title{font-family:'Fredoka',sans-serif;color:var(--coral-dark);font-size:1.8rem;margin:0 0 6px;}
+  .badge-desc{color:var(--muted);font-weight:600;max-width:460px;margin:0 auto 22px;}
+  .score-line{display:flex;justify-content:center;gap:26px;margin:22px 0;flex-wrap:wrap;}
+  .score-block{text-align:center;}
+  .score-num{font-family:'Fredoka',sans-serif;font-size:2rem;color:var(--mint-dark);display:block;}
+  .score-cap{font-size:0.85rem;color:var(--muted);font-weight:700;}
+
+  footer{text-align:center;padding:34px 20px 44px;color:var(--muted);font-weight:600;font-size:0.9rem;}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
+  .reveal.show{opacity:1;transform:none;}
+
+  .locked-note{text-align:center;color:#b0a49a;font-weight:700;padding:30px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo"><span class="logo-badge">⭐</span>习惯小达人</div>
+    <div class="energy-meter">
+      <span class="energy-label">元气值</span>
+      <div class="stars-row" id="starsRow"></div>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <span class="hero-tag">好习惯 VS 坏习惯 · 边玩边成长</span>
+  <h1>习惯小达人</h1>
+  <p>每一次正确的选择,都会让你的小伙伴更有元气!一起来闯关,养成受用一生的好习惯吧~</p>
+
+  <div class="stage-char">
+    <div class="orbit">
+      <div class="star s1"><span>⭐</span></div>
+      <div class="star s2"><span>⭐</span></div>
+      <div class="star s3"><span>⭐</span></div>
+      <div class="star s4"><span>⭐</span></div>
+    </div>
+    <div class="char-face mid" id="charFace">🙂</div>
+  </div>
+
+  <button class="btn" onclick="document.getElementById('game1').scrollIntoView()">🚀 开始闯关</button>
+</section>
+
+<main class="wrap">
+
+  <section class="stage" id="game1">
+    <div class="stage-head reveal">
+      <span class="stage-num">1</span>
+      <h2>好习惯 · 坏习惯大分类</h2>
+      <p>看看卡片上写的是什么,判断它是好习惯还是坏习惯!</p>
+    </div>
+    <div class="panel reveal">
+      <div class="sort-hud">
+        <div class="hud-chip">第 <span id="sortRound">1</span> / <span id="sortTotal">14</span> 题</div>
+        <div class="hud-chip">✅ 答对 <span id="sortCorrect">0</span></div>
+      </div>
+      <div class="card-stage">
+        <div class="habit-card" id="habitCard">
+          <span class="icon" id="habitIcon">🪥</span>
+          <span class="txt" id="habitTxt">早晚刷牙</span>
+        </div>
+      </div>
+      <div class="choice-row">
+        <button class="choice-btn good" id="btnGood"><span class="icon">🌞</span>这是好习惯</button>
+        <button class="choice-btn bad" id="btnBad"><span class="icon">⛈️</span>这是坏习惯</button>
+      </div>
+      <div class="feedback-flash" id="sortFeedback"></div>
+    </div>
+  </section>
+
+  <section class="stage" id="game2">
+    <div class="stage-head reveal">
+      <span class="stage-num">2</span>
+      <h2>情景小选择</h2>
+      <p>遇到这些情况,你会怎么做呢?选一个最正确的答案吧!</p>
+    </div>
+    <div class="panel reveal" id="quizPanel">
+      <div class="locked-note" id="quizLocked">先完成第一关"好习惯坏习惯大分类"哦 👆</div>
+    </div>
+  </section>
+
+  <section class="stage" id="result">
+    <div class="stage-head reveal">
+      <span class="stage-num">3</span>
+      <h2>你的成长报告</h2>
+      <p>看看这次闯关,你为自己赢得了怎样的称号!</p>
+    </div>
+    <div class="panel reveal badge-card" id="resultPanel">
+      <div class="locked-note">完成两个小任务后,这里会出现你的专属称号 🏅</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  🌟🧡🌟<br/>
+  好习惯成就好未来 · 从今天开始,做更棒的自己
+</footer>
+
+<script>
+/* ---------------- 全局元气值 ---------------- */
+let energy = 50; // 0-100
+const starsRow = document.getElementById('starsRow');
+const charFace = document.getElementById('charFace');
+const orbitStars = document.querySelectorAll('.orbit .star');
+
+for(let i=0;i<5;i++){
+  const s = document.createElement('span');
+  s.textContent = '⭐';
+  starsRow.appendChild(s);
+}
+const starEls = starsRow.querySelectorAll('span');
+
+function updateEnergy(delta){
+  energy = Math.max(0, Math.min(100, energy + delta));
+  const litCount = Math.round(energy/20);
+  starEls.forEach((s,i)=> s.classList.toggle('lit', i < litCount));
+  orbitStars.forEach((s,i)=> s.classList.toggle('lit', i < Math.ceil(energy/25)));
+
+  charFace.classList.remove('low','mid','high');
+  if(energy < 35){
+    charFace.classList.add('low');
+    charFace.textContent = '😟';
+  } else if(energy < 70){
+    charFace.classList.add('mid');
+    charFace.textContent = '🙂';
+  } else {
+    charFace.classList.add('high');
+    charFace.textContent = '😄';
+  }
+}
+updateEnergy(0);
+
+/* ---------------- 关卡一:好习惯/坏习惯分类 ---------------- */
+const habitPool = [
+  {name:'早睡早起', icon:'🌅', good:true},
+  {name:'早晚刷牙', icon:'🪥', good:true},
+  {name:'饭前洗手', icon:'🧼', good:true},
+  {name:'每天多喝水', icon:'🥤', good:true},
+  {name:'认真完成作业', icon:'📚', good:true},
+  {name:'多吃蔬菜水果', icon:'🥦', good:true},
+  {name:'坚持锻炼身体', icon:'🏃', good:true},
+  {name:'自己整理书包', icon:'🎒', good:true},
+  {name:'每天阅读课外书', icon:'📖', good:true},
+  {name:'说话有礼貌', icon:'🙏', good:true},
+  {name:'排队等候', icon:'🚶', good:true},
+  {name:'节约用纸用水', icon:'💧', good:true},
+  {name:'用完东西放回原位', icon:'🧸', good:true},
+  {name:'主动帮父母做家务', icon:'🧹', good:true},
+  {name:'边吃饭边看电视', icon:'📺', good:false},
+  {name:'长时间玩手机游戏', icon:'📱', good:false},
+  {name:'挑食不吃蔬菜', icon:'🙅', good:false},
+  {name:'咬指甲', icon:'💅', good:false},
+  {name:'乱扔垃圾', icon:'🗑️', good:false},
+  {name:'打断别人说话', icon:'🗣️', good:false},
+  {name:'熬夜不睡觉', icon:'🌙', good:false},
+  {name:'不写作业先玩耍', icon:'🎮', good:false},
+  {name:'浪费食物', icon:'🍔', good:false},
+  {name:'抢别人的东西', icon:'✋', good:false},
+];
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+const sortRounds = shuffle(habitPool).slice(0, 14);
+let sortIndex = 0;
+let sortCorrectCount = 0;
+let sortDone = false;
+
+document.getElementById('sortTotal').textContent = sortRounds.length;
+
+const habitCard = document.getElementById('habitCard');
+const habitIcon = document.getElementById('habitIcon');
+const habitTxt = document.getElementById('habitTxt');
+const sortFeedback = document.getElementById('sortFeedback');
+
+function renderSortRound(){
+  if(sortIndex >= sortRounds.length){
+    finishSortGame();
+    return;
+  }
+  const item = sortRounds[sortIndex];
+  habitCard.style.animation = 'none';
+  void habitCard.offsetWidth;
+  habitCard.style.animation = 'pop .35s ease';
+  habitIcon.textContent = item.icon;
+  habitTxt.textContent = item.name;
+  document.getElementById('sortRound').textContent = sortIndex + 1;
+  sortFeedback.textContent = '';
+}
+renderSortRound();
+
+function handleChoice(isGoodChoice){
+  if(sortDone) return;
+  const item = sortRounds[sortIndex];
+  if(isGoodChoice === item.good){
+    sortCorrectCount++;
+    document.getElementById('sortCorrect').textContent = sortCorrectCount;
+    sortFeedback.textContent = '✅ 判断正确!真棒!';
+    sortFeedback.className = 'feedback-flash good';
+    updateEnergy(+3);
+  } else {
+    sortFeedback.textContent = `❌ 不对哦,"${item.name}"其实是${item.good ? '好习惯' : '坏习惯'}`;
+    sortFeedback.className = 'feedback-flash bad';
+    updateEnergy(-2);
+  }
+  sortIndex++;
+  setTimeout(renderSortRound, 900);
+}
+
+document.getElementById('btnGood').addEventListener('click', ()=>handleChoice(true));
+document.getElementById('btnBad').addEventListener('click', ()=>handleChoice(false));
+
+function finishSortGame(){
+  sortDone = true;
+  habitIcon.textContent = '🎉';
+  habitTxt.textContent = '第一关完成!';
+  sortFeedback.textContent = `你答对了 ${sortCorrectCount} / ${sortRounds.length} 题`;
+  sortFeedback.className = 'feedback-flash good';
+  unlockQuiz();
+}
+
+/* ---------------- 关卡二:情景小选择 ---------------- */
+const quizData = [
+  {
+    q:'放学回家后,你应该先做什么?',
+    opts:['先写作业,再痛快玩耍','先看半小时电视再说','先玩游戏,作业留到很晚再写','先睡一觉'],
+    correct:0,
+    tip:'先完成作业,时间安排会更从容,玩耍时也能更安心哦。'
+  },
+  {
+    q:'吃饭时看到自己不爱吃的蔬菜,你应该怎么做?',
+    opts:['直接把它拨到一边不吃','尝试吃一点,营养要均衡','趁大人不注意偷偷扔掉','让别人帮忙吃掉'],
+    correct:1,
+    tip:'各种蔬菜都有身体需要的营养,试着吃一点点,慢慢就会习惯啦。'
+  },
+  {
+    q:'晚上到了睡觉时间,你还想接着玩,你应该怎么做?',
+    opts:['再玩一小时','跟爸爸妈妈商量后按时上床睡觉','偷偷躲被窝里玩','假装睡着,等大人走了再玩'],
+    correct:1,
+    tip:'按时睡觉能让身体和大脑得到充分休息,第二天才会更有精神。'
+  },
+  {
+    q:'早上起床后,第一件事应该是?',
+    opts:['马上打开电视','刷牙洗脸,整理自己','先躺一会儿','翻看手机'],
+    correct:1,
+    tip:'刷牙洗脸是每天保持清洁健康的好习惯,养成规律的晨间流程很重要。'
+  },
+  {
+    q:'同学正在讲话的时候,你突然有问题想问,你应该怎么做?',
+    opts:['立刻大声打断他','举手示意,等他说完再问','直接站起来抢话','扭头跟旁边同学讲话'],
+    correct:1,
+    tip:'耐心等待、举手发言,是对别人的尊重,也是很棒的沟通礼貌。'
+  },
+  {
+    q:'玩完玩具或者看完书之后,你应该怎么做?',
+    opts:['放着不管,去做别的事','把它们收拾整齐放回原位','扔在地上等别人来收','留到很久以后再收拾'],
+    correct:1,
+    tip:'用完就归位,不仅让房间整洁,下次找东西的时候也会更方便。'
+  },
+  {
+    q:'在图书馆或电影院这样的公共场所,你应该怎么做?',
+    opts:['大声说话、跑来跑去','保持安静,不打扰别人','用手机外放声音','和朋友大声打闹'],
+    correct:1,
+    tip:'在公共场所保持安静,是对其他人的尊重,也是重要的公共礼仪。'
+  },
+  {
+    q:'过马路的时候,你应该怎么做?',
+    opts:['低头看手机直接走','走斑马线,看清红绿灯再通过','抄近路从车缝中穿过','跟着别人小跑'],
+    correct:1,
+    tip:'走斑马线、看红绿灯,是保护自己安全最重要的好习惯。'
+  }
+];
+
+let quizIndex = 0;
+let quizCorrectCount = 0;
+const quizPanel = document.getElementById('quizPanel');
+
+function unlockQuiz(){
+  quizPanel.innerHTML = `
+    <div class="quiz-progress" id="quizProgress"></div>
+    <div class="quiz-q" id="quizQ"></div>
+    <div class="quiz-opts" id="quizOpts"></div>
+    <div class="explain" id="quizExplain"></div>
+  `;
+  buildProgress();
+  renderQuiz();
+}
+
+function buildProgress(){
+  const p = document.getElementById('quizProgress');
+  p.innerHTML = '';
+  quizData.forEach((_, i)=>{
+    const d = document.createElement('div');
+    d.className = 'quiz-dot' + (i < quizIndex ? ' done' : '');
+    p.appendChild(d);
+  });
+}
+
+function renderQuiz(){
+  if(quizIndex >= quizData.length){
+    finishQuiz();
+    return;
+  }
+  buildProgress();
+  const item = quizData[quizIndex];
+  document.getElementById('quizQ').textContent = `第 ${quizIndex+1} 题:${item.q}`;
+  const optsEl = document.getElementById('quizOpts');
+  optsEl.innerHTML = '';
+  document.getElementById('quizExplain').style.display = 'none';
+  item.opts.forEach((opt, idx)=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = opt;
+    b.addEventListener('click', ()=>selectQuizOption(idx));
+    optsEl.appendChild(b);
+  });
+}
+
+function selectQuizOption(idx){
+  const item = quizData[quizIndex];
+  const buttons = document.querySelectorAll('#quizOpts .opt');
+  buttons.forEach(b=>b.classList.add('disabled'));
+  if(idx === item.correct){
+    buttons[idx].classList.add('correct');
+    quizCorrectCount++;
+    updateEnergy(+3);
+  } else {
+    buttons[idx].classList.add('wrong');
+    buttons[item.correct].classList.add('correct');
+    updateEnergy(-2);
+  }
+  const explain = document.getElementById('quizExplain');
+  explain.textContent = '💡 ' + item.tip;
+  explain.style.display = 'block';
+  setTimeout(()=>{
+    quizIndex++;
+    renderQuiz();
+  }, 1600);
+}
+
+function finishQuiz(){
+  quizPanel.innerHTML = `
+    <div class="badge-emoji">🎉</div>
+    <h3 style="font-family:'Fredoka',sans-serif;color:var(--coral-dark);">情景选择完成!</h3>
+    <p style="color:var(--muted);font-weight:600;">你答对了 ${quizCorrectCount} / ${quizData.length} 题</p>
+  `;
+  showResult();
+}
+
+/* ---------------- 结果与称号 ---------------- */
+function showResult(){
+  const totalRight = sortCorrectCount + quizCorrectCount;
+  const totalQ = sortRounds.length + quizData.length;
+  const pct = totalRight / totalQ;
+
+  let badge, title, desc;
+  if(pct >= 0.85){
+    badge = '🏆'; title = '习惯小英雄';
+    desc = '你对好习惯和坏习惯都非常清楚,而且总能做出正确的选择,是当之无愧的习惯小英雄!';
+  } else if(pct >= 0.6){
+    badge = '🥈'; title = '习惯小达人';
+    desc = '你已经掌握了不少好习惯的小知识,继续坚持,离习惯小英雄只差一点点啦!';
+  } else {
+    badge = '🌱'; title = '习惯小新苗';
+    desc = '万事开头难,你已经迈出了养成好习惯的第一步,多复习一下今天学到的内容,下次会更棒!';
+  }
+
+  document.getElementById('resultPanel').innerHTML = `
+    <span class="badge-emoji">${badge}</span>
+    <h3 class="badge-title">${title}</h3>
+    <p class="badge-desc">${desc}</p>
+    <div class="score-line">
+      <div class="score-block"><span class="score-num">${sortCorrectCount}/${sortRounds.length}</span><span class="score-cap">习惯分类</span></div>
+      <div class="score-block"><span class="score-num">${quizCorrectCount}/${quizData.length}</span><span class="score-cap">情景选择</span></div>
+      <div class="score-block"><span class="score-num">${energy}</span><span class="score-cap">元气值</span></div>
+    </div>
+    <button class="btn secondary" onclick="location.reload()">🔁 再玩一次</button>
+  `;
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ---------------- 滚动动画 ---------------- */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('show');
+  });
+}, {threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
